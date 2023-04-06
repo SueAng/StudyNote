@@ -116,7 +116,7 @@ public:
 ### 349. [**Intersection of Two Arrays**](https://leetcode.com/problems/intersection-of-two-arrays/description/) [Easy]
 Given two integer arrays nums1 and nums2, return an array of their intersection. Each element in the result must be unique and you may return the result in any order.  
  
-**方法1：暴力法** Runtime `27ms` Beats `7.6%` Memory `10.1MB` Beats `74.16%`  
+**方法1：暴力法1** Runtime `13ms` Beats `23.6%` Memory `10.1MB` Beats `74.16%`  
 直接暴力遍历，重复的元素加到`values`中，结果中会出现重复元素，利用`sort`排序后，用`unique`去重，最后用`values.erase()`擦除重复数据。如你所见，时间复杂度为`O(n<sup>2</sup>)。
 ```
 class Solution {
@@ -127,13 +127,41 @@ public:
         int nums2_len = nums2.size();
         for( int i = 0; i < nums1_len; i++){
             for( int j = 0; j < nums2_len; j++){
-                if(nums1[i] == nums2[j])
+                if(nums1[i] == nums2[j]){
                     values.push_back(nums1[i]);
-                continue;
+                    break;
                 }
             }
+        }
         sort(values.begin(),values.end());
         values.erase(unique(values.begin(),values.end()),values.end());
+        return values;
+    }
+};
+```
+**方法1：暴力法改善** Runtime `0ms` Beats `100%` Memory `10MB` Beats `90.82%`  
+先将两数组排序后剔除重复元素，再进行比较，这里循环的时候用了一个小技巧，当`i`遍循环时找到`nums2[j]`与`nums1[i]`,那么此时`nums2[j]`之前的元素不可能与`nums1[i]`之后的元素相等,所以第`i+1`次循环可以从`nums[j+1]`开始比较，如你所见，时间复杂度改善很大。
+```
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> values{};
+        int point = 0;
+        sort(nums1.begin(),nums1.end());
+        sort(nums2.begin(),nums2.end());
+        nums1.erase(unique(nums1.begin(),nums1.end()),nums1.end());
+        nums2.erase(unique(nums2.begin(),nums2.end()),nums2.end());
+        int nums1_len = nums1.size();
+        int nums2_len = nums2.size();
+        for(int i = 0; i < nums1_len; i++){
+             for(int j = point; j < nums2_len; j++){
+                 if(nums1[i] == nums2[j]){
+                    values.push_back(nums1[i]);
+                    point = j;
+                    break;
+                 }
+             }
+        }
         return values;
     }
 };
