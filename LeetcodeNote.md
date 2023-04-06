@@ -116,7 +116,7 @@ public:
 ### 349. [**Intersection of Two Arrays**](https://leetcode.com/problems/intersection-of-two-arrays/description/) [Easy]
 Given two integer arrays nums1 and nums2, return an array of their intersection. Each element in the result must be unique and you may return the result in any order.  
  
-**方法1：暴力法1** Runtime `13ms` Beats `23.6%` Memory `10.1MB` Beats `74.16%`  
+**方法1：暴力法** Runtime `13ms` Beats `23.6%` Memory `10.1MB` Beats `74.16%`  
 直接暴力遍历，重复的元素加到`values`中，结果中会出现重复元素，利用`sort`排序后，用`unique`去重，最后用`values.erase()`擦除重复数据。如你所见，时间复杂度为`O(n<sup>2</sup>)。
 ```
 class Solution {
@@ -166,8 +166,52 @@ public:
     }
 };
 ```
-
-
+### 350. [***Intersection of Two Arrays II**](https://leetcode.com/problems/intersection-of-two-arrays-ii/description/) [Easy]
+**方法1：暴力法** Runtime `6ms` Beats `61.88%` Memory `10.1MB` Beats `85.10%`  
+排序后进行比较
+```
+class Solution {
+public:
+    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> result{};
+        int point = 0;
+        int nums1_len = nums1.size();
+        int nums2_len = nums2.size();
+        sort(nums1.begin(),nums1.end());
+        sort(nums2.begin(),nums2.end());
+        for (int i = 0; i < nums1_len; i++){
+            for (int j = point; j < nums2_len; j++){
+                if(nums1[i] == nums2[j]){
+                    result.push_back(nums1[i]);
+                    point = j + 1;
+                    break;
+                }
+            }
+        }
+    return result;
+    }
+};
+```
+### 414. [**Third Maximum Number**](https://leetcode.com/problems/third-maximum-number/description/)[Easy]  
+Given an integer array nums, return the third distinct maximum number in this array. If the third maximum does not exist, return the maximum number.  
+**方法1：排序法** Runtime `7 ms` Beats `64.87%` Memory `9.2MB` Beats `69.16%`
+```
+class Solution {
+public:
+    int thirdMax(vector<int>& nums) {
+        int nums_len = nums.size();
+        if(nums_len == 1)
+            return nums[0];
+        sort(nums.begin(),nums.end());
+        nums.erase(unique(nums.begin(),nums.end()),nums.end());
+        int nums_len1 = nums.size();
+        if (nums_len1 >= 3)
+            return nums[nums_len1 - 3];
+        else 
+            return nums[nums_len1 - 1];
+    }
+};
+```
 ### 881. [**Boats to Save People**](https://leetcode.com/problems/boats-to-save-people/description/) [Medium]
 You are given an array people where `people[i]` is the weight of the ith person, and an infinite number of boats where each boat can carry a maximum weight of `limit`. Each boat carries at most two people at the same time, provided the sum of the weight of those people is at most `limit`.
 
