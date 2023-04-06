@@ -212,6 +212,40 @@ public:
     }
 };
 ```
+**方法2：暴力法** Runtime `3ms` Beats `95.71%` Memory `9.1MB` Beats `92.6%`  
+```
+class Solution {
+public:
+    int thirdMax(vector<int>& nums) {
+        int nums_len = nums.size();
+        int max = nums[0];
+        int second = nums[0];
+        int third = nums[0];
+        for(int i = 0; i < nums_len; i++){
+            if(max <= nums[i]){
+                if(max < nums[i]){
+                    third = second;
+                    second = max;
+                    max = nums[i];
+                }
+            }
+            else if(second <= nums[i] || second == max){
+                if(second == nums[i]);
+                else{
+                    third = second;
+                    second = nums[i];
+                }
+            }
+            else if(third < nums [i] || third == max || third == second)
+                third = nums[i];
+        }
+        if(max == third || max == second || third == second)
+            return max;
+        else
+            return third;
+    }
+};
+```
 ### 881. [**Boats to Save People**](https://leetcode.com/problems/boats-to-save-people/description/) [Medium]
 You are given an array people where `people[i]` is the weight of the ith person, and an infinite number of boats where each boat can carry a maximum weight of `limit`. Each boat carries at most two people at the same time, provided the sum of the weight of those people is at most `limit`.
 
