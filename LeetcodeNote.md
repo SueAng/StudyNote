@@ -1,4 +1,4 @@
-### 1. [**Two Sum**](https://leetcode.com/problems/two-sum/description/)[Easy]
+### 1. [**Two Sum**](https://leetcode.com/problems/two-sum/description/) [Easy]
 Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 
 You may assume that each input would have exactly one solution, and you may not use the same element twice.
@@ -22,7 +22,7 @@ public:
     }
 };
 ```
-**方法1：hash map法**Runtime `12ms` Beats `80.47%` Memory `11MB` Beats `27.81%`
+**方法1：hash map法** Runtime `12ms` Beats `80.47%` Memory `11MB` Beats `27.81%`
 ```
 class Solution {
 public:
@@ -43,7 +43,7 @@ public:
 关联式容器与序列式容器相比较，特点在“关联”上，关联式容器通过`键对值`（包括`key`与`value`），将储存的每一个数据value与一个键值key一一对应起来，只需通过键值key就可以读写元素，在查找时效率较高。  
 关联式容器分为两种，**有序（ordered）**和**无序（unordered）**，C++98中，STL只有底层用`红黑树`实现的有序关联容器包括`map`,`set`,`multimap`,`multimap`，这四个容器会将插入的元素按照特定的顺序储存，以保证红黑树的平衡，进而实现log<sub>2</sub>N的查询效率。在C++11中，STL又增加了4个`unordered`的无序关联容器，包括[unordered_map](https://cplusplus.com/reference/unordered_map/unordered_map/),`unorderes_set`, `unordered_multimap`,`unordered_multiset`，他们的底层使用`哈希表（hash map）`实现，在不发生哈希冲突(碰撞)时查询效率可达到O(1)。   
 
-**方法3：双指针法** Runtime `11ms` Beats` 83.55%` Memory `10.3MB` Beats`49.56%`
+**方法3：双指针法** Runtime `11ms` Beats` 83.55%` Memory `10.3MB` Beats`49.56%`  
 构造一个常规数组`buns_copy`，记录`nums`的数值和每个数值的位置，将`nums`排序，利用双指针找到第一对和为`target`的数，再和`nums_copy`中的数比对，找到最初的indices.
 ```
 class Solution {
@@ -76,8 +76,46 @@ public:
     }
 };
 ```
+### 4. [**Median of Two Sorted Arrays**](https://leetcode.com/problems/median-of-two-sorted-arrays/) [Hard]
+Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.
 
-### 15. [**3Sum**](https://leetcode.com/problems/3sum/description/)[Medium] 
+The overall run time complexity should be O(log (m+n)).  
+```
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> nums{};
+        int nums1_len = nums1.size();
+        int nums2_len = nums2.size();
+        int p1 = 0;
+        int p2 = 0;
+        while(p1 < nums1_len && p2 < nums2_len){
+            if(nums1[p1] < nums2[p2]){
+                nums.push_back(nums1[p1]);
+                p1++;
+            }
+            else{
+                nums.push_back(nums2[p2]);
+                p2++;
+            }
+        }
+        while(p1 < nums1_len){
+            nums.push_back(nums1[p1]);
+                p1++;
+        }
+        while(p2 < nums2_len){
+            nums.push_back(nums2[p2]);
+                p2++;
+        }
+        int n = p1 + p2;
+        if(n % 2 == 0)
+            return double(nums[n / 2 - 1] + nums[n / 2]) / 2;
+        else
+            return nums[n / 2];
+    }
+};
+```
+### 15. [**3Sum**](https://leetcode.com/problems/3sum/description/) [Medium] 
 Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 Notice that the solution set must not contain duplicate triplets.   
 **方法1：究极暴力解法** `Time Limit Exceeded`
@@ -117,7 +155,7 @@ public:
     }
 };
 ```
-**方法2：双指针法**Runtime `274ms` Beats `66.76%` Memory `23.8MB` Beats `99.35%`
+**方法2：双指针法** Runtime `274ms` Beats `66.76%` Memory `23.8MB` Beats `99.35%`
 ```
 class Solution {
 public:
@@ -150,6 +188,46 @@ public:
             }
         }
         return res;
+    }
+};
+```
+### 164. [**Maximum Gap**](https://leetcode.com/problems/maximum-gap/) [Hard]
+Given an integer array nums, return the maximum difference between two successive elements in its sorted form. If the array contains less than two elements, return 0.
+
+You must write an algorithm that runs in linear time and uses linear extra space.
+```
+class Solution {
+public:
+    int maximumGap(vector<int>& nums) {
+        if(nums.size() < 2)
+            return 0;
+        sort(nums.begin(),nums.end());
+        int max = nums[1] - nums[0];
+        for(int i = 0; i < nums.size() - 1; i++ ){
+            if(nums[i+1] - nums[i] > max)
+                max = nums[i+1] - nums[i];
+        }
+        return max;
+    }
+};
+```
+### 167. [**Two Sum II - Input Array Is Sorted**](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/description/) [Medium]
+**方法1：双指针法** Runtime `8ms` Beats `93.5% `Memory `15.6MB `Beats `81.90%`
+```
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& numbers, int target) {
+        int front = 0;
+        int back = numbers.size() - 1;
+        while(front < back){
+            if(numbers[front] + numbers [back] == target)
+                return {front + 1, back + 1};
+            else if(numbers[front] + numbers [back] < target)
+                front++;
+            else
+                back--;
+        }
+        return {};
     }
 };
 ```
@@ -230,6 +308,30 @@ template <class RandomAccessIterator, class Compare>  void sort (RandomAccessIte
 **排序顺序**：将`[first,last)`的元素按升序排列，它是一个不稳定的排序，就是说对于相等的元素，排序后他们的相对顺序可能会发生改变。  
 **参数**：`(first,last，cmp)`(首元素地址(必填), 尾元素地址的下一个地址(必填), 比较函数(非必填)),比较函数可以根据自身需要填写，如果不写比较函数，则默认对前面给出的区间进行递增排序。在STL标准容器中，只有vector、string、deque是可以使用sort的。
 
+### 220. [**Contains Duplicate III**](https://leetcode.com/problems/contains-duplicate-iii/) [Hard]
+You are given an integer array nums and two integers indexDiff and valueDiff.
+
+Find a pair of indices (i, j) such that:
+
+i != j,
+abs(i - j) <= indexDiff.
+abs(nums[i] - nums[j]) <= valueDiff, and
+Return true if such pair exists or false otherwise.
+```
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int indexDiff, int valueDiff) {
+        int nums_len = nums.size();
+        for (int i = 0; i < nums_len -  1; i++){
+            for(int j = i + 1;j < i + indexDiff + 1; j++){
+                if(j < nums_len && abs(i - j) <= indexDiff && abs(nums[i] - nums[j]) <= valueDiff)
+                    return true;
+            }
+        }
+        return false;
+    }
+};
+```
 ### 268. [**Missing Number**](https://leetcode.com/problems/missing-number/) [Easy]
 Given an array nums containing n distinct numbers in the range [0, n], return the only number in the range that is missing from the array.  
 **方法1：求和法** Runtime `24ms` Beats `43.93%` Memory `17.9MB` Beats `69.85%`  
