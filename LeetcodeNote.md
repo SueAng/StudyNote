@@ -246,6 +246,34 @@ public:
     }
 };
 ```
+### 455. [**Assign Cookies**](https://leetcode.com/problems/assign-cookies/description/) [Easy]
+Assume you are an awesome parent and want to give your children some cookies. But, you should give each child at most one cookie.  
+Each child i has a greed factor g[i], which is the minimum size of a cookie that the child will be content with; and each cookie j has a size s[j]. If s[j] >= g[i], we can assign the cookie j to the child i, and the child i will be content. Your goal is to maximize the number of your content children and output the maximum number.
+```
+lass Solution {
+public:
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+        int num = 0;
+        int point = 0;
+        int g_len = g.size();
+        int s_len = s.size();
+        sort(g.begin(),g.end());
+        sort(s.begin(),s.end());
+        if(s_len == 0)
+            return 0;
+        for (int i = 0; i < g_len; i++){
+            for (int j = point; j < s_len; j++){
+                if(g[i] <= s[j] ){
+                    num++;
+                    point = j + 1;
+                    break;
+                }
+            }
+        }
+        return num;
+    }
+};
+```
 ### 881. [**Boats to Save People**](https://leetcode.com/problems/boats-to-save-people/description/) [Medium]
 You are given an array people where `people[i]` is the weight of the ith person, and an infinite number of boats where each boat can carry a maximum weight of `limit`. Each boat carries at most two people at the same time, provided the sum of the weight of those people is at most `limit`.
 
