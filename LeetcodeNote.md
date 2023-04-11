@@ -1,3 +1,158 @@
+### 1. [**Two Sum**](https://leetcode.com/problems/two-sum/description/)[Easy]
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.  
+
+**方法1：暴力解法** Runtime `381 ms` Beats `42.14%` Memory `10.3MB` Beats `73.74%`
+```
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int nums_len = nums.size();
+        for(int i = 0;i < nums_len; i++){
+            for(int j = i + 1;j < nums_len; j++) {
+                if(nums[i] + nums[j] == target){
+                    return {i,j};
+                }
+            }
+        }
+        return {};
+    }
+};
+```
+**方法1：hash map法**Runtime `12ms` Beats `80.47%` Memory `11MB` Beats `27.81%`
+```
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> map;               //声明一个unordered_map
+        for(int i = 0; i < nums.size(); i++){
+            int complement = target - nums[i];     //计算每个元素的相对于target补数
+            if(map.find(complement) != map.end()){ //以补数作为key值，查找是否存在于map中
+                return {map[complement],i};        //存在，返回value 
+            }
+            map[nums[i]] = i;                      //没有找到该元素的补数，将该元素的值作为Key值，位置作为value存入map
+        }
+        return {};
+    }
+};
+```
+### **STL关联式容器**
+关联式容器与序列式容器相比较，特点在“关联”上，关联式容器通过`键对值`（包括`key`与`value`），将储存的每一个数据value与一个键值key一一对应起来，只需通过键值key就可以读写元素，在查找时效率较高。  
+关联式容器分为两种，**有序（ordered）**和**无序（unordered）**，C++98中，STL只有底层用`红黑树`实现的有序关联容器包括`map`,`set`,`multimap`,`multimap`，这四个容器会将插入的元素按照特定的顺序储存，以保证红黑树的平衡，进而实现log<sub>2</sub>N的查询效率。在C++11中，STL又增加了4个`unordered`的无序关联容器，包括[unordered_map](https://cplusplus.com/reference/unordered_map/unordered_map/),`unorderes_set`, `unordered_multimap`,`unordered_multiset`，他们的底层使用`哈希表（hash map）`实现，在不发生哈希冲突(碰撞)时查询效率可达到O(1)。   
+
+**方法3：双指针法** Runtime `11ms` Beats` 83.55%` Memory `10.3MB` Beats`49.56%`
+构造一个常规数组`buns_copy`，记录`nums`的数值和每个数值的位置，将`nums`排序，利用双指针找到第一对和为`target`的数，再和`nums_copy`中的数比对，找到最初的indices.
+```
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        vector<int> result{};
+        int nums_len = nums.size();
+        int nums_copy[nums_len];      //copy the nums to register the in indices;
+        int head = 0;
+        int tail = nums_len - 1;
+        for (int i = 0; i < nums_len; i++){
+            nums_copy[i] = nums[i];
+        }
+        sort(nums.begin(),nums.end());
+        while(head < tail){
+            if(nums[head] + nums[tail] == target)
+                break;
+            else if(nums[head] + nums[tail] < target)
+                head++;
+            else
+                tail--;
+        }
+        for(int i = 0; i < nums_len; i++){
+            if(nums_copy[i] == nums[head])
+                result.push_back(i);
+            else if(nums_copy[i] == nums[tail])
+                result.push_back(i);
+        }
+        return result;
+    }
+};
+```
+
+### 15. [**3Sum**](https://leetcode.com/problems/3sum/description/)[Medium] 
+Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
+Notice that the solution set must not contain duplicate triplets.   
+**方法1：究极暴力解法** `Time Limit Exceeded`
+```
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int nums_len = nums.size();
+        int result_num = 0;
+        vector<vector<int>> result{};
+        sort(nums.begin(),nums.end());
+        for (int i = 0; i < nums_len; i++){
+            for (int j = i + 1; j < nums_len; j++){
+                for(int k = j + 1; k < nums_len; k++){
+                    if(nums[i] + nums[j] + nums[k] == 0 ){
+                        result.push_back({nums[i],nums[j],nums[k]});
+                        result_num++;
+                    }
+                }
+            }
+        }
+        for(int i = 0; i < result_num; i++){
+            for(int j = 0 ; j < result_num; j++){
+                if(result[i] == result[j] && i != j){
+                    int k = j;
+                    while(k < result_num - 1){
+                        result[k] = result[k + 1];
+                        k++;
+                    }
+                    result.pop_back();
+                    result_num--;
+                    j--;
+                }
+            }
+        }
+        return result;
+    }
+};
+```
+**方法2：双指针法**Runtime `274ms` Beats `66.76%` Memory `23.8MB` Beats `99.35%`
+```
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int nums_len = nums.size();
+        vector<vector<int>> res{};
+        sort(nums.begin(),nums.end());
+        for(int i = 0; i < nums_len; i++){
+            if(i > 0 && nums[i] == nums[i-1])
+                continue;
+            if(num[i] > 0)
+                break;
+            int head = i + 1;
+            int tail = nums_len - 1;
+            while(head < tail){
+                if(nums[i] + nums[head] + nums[tail] == 0){
+                    res.push_back({nums[i], nums[head], nums[tail]});
+                    head++;
+                    tail--;
+                    while (head < tail && nums[head] == nums[head - 1]) 
+                        head++;
+                    while (head < tail && nums[tail] == nums[tail + 1]) 
+                        tail--;
+                }
+                else if(nums[head] + nums[tail] + nums[i] < 0){
+                    head++;
+                }
+                else
+                    tail--;
+            }
+        }
+        return res;
+    }
+};
+```
 ### 217. [**Contains Duplicate**](https://leetcode.com/problems/contains-duplicate/description/) [Easy]
 
 Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.  
@@ -139,6 +294,7 @@ public:
     }
 };
 ```
+
 **方法1：暴力法改善** Runtime `0ms` Beats `100%` Memory `10MB` Beats `90.82%`  
 先将两数组排序后剔除重复元素，再进行比较，这里循环的时候用了一个小技巧，当`i`遍循环时找到`nums2[j]`与`nums1[i]`,那么此时`nums2[j]`之前的元素不可能与`nums1[i]`之后的元素相等,所以第`i+1`次循环可以从`nums[j+1]`开始比较，如你所见，时间复杂度改善很大。
 ```
