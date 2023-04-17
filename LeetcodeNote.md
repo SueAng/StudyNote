@@ -52,8 +52,7 @@ public:
 };
 ```
 
-### **STL关联式容器**
-
+**STL关联式容器**
 关联式容器与序列式容器相比较，特点在“关联”上，关联式容器通过`键对值`（包括`key`与`value`），将储存的每一个数据value与一个键值key一一对应起来，只需通过键值key就可以读写元素，在查找时效率较高。  
 关联式容器分为两种，**有序（ordered）**和**无序（unordered）**，C++98中，STL只有底层用`红黑树`实现的有序关联容器包括`map`,`set`,`multimap`,`multimap`，这四个容器会将插入的元素按照特定的顺序储存，以保证红黑树的平衡，进而实现log<sub>2</sub>N的查询效率。在C++11中，STL又增加了4个`unordered`的无序关联容器，包括[unordered_map](https://cplusplus.com/reference/unordered_map/unordered_map/),`unorderes_set`, `unordered_multimap`,`unordered_multiset`，他们的底层使用`哈希表（hash map）`实现，在不发生哈希冲突(碰撞)时查询效率可达到O(1).  
 
@@ -469,44 +468,6 @@ public:
 };
 ```
 
-### 347. [**Top K Frequent Elements**](https://leetcode.com/problems/top-k-frequent-elements/) [Medium]
-
-Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.
-**方法1：暴力解法** Runtime `17ms` Beats `59.14%` Memory `13.5MB` Beats `97.87%`
-
-```C++
-class Solution {
-public:
-    vector<int> topKFrequent(vector<int>& nums, int k) {
-        vector<int> res{};
-        vector<int> freq{};
-        unordered_map<int, int> map;
-        if(nums.size() == 1)
-            return nums;
-        for(int i = 0; i < nums.size(); i++){
-            if(map.find(nums[i]) == map.end()){
-                map[nums[i]] = 1;
-            }
-            else 
-                map[nums[i]]++;
-        }
-        for(auto pair:map){
-            freq.push_back(pair.second);
-        }
-        sort(freq.begin(), freq.end(),  greater<int>());
-        for(int i = 0; i < k ; i++){
-            if(i > 0 && freq[i] == freq[i - 1])
-                continue;
-            for(auto pair:map){
-                if(pair.second == freq[i])
-                res.push_back(pair.first);
-            }
-        }
-        return res;
-    }
-};
-```
-
 ### 217. [**Contains Duplicate**](https://leetcode.com/problems/contains-duplicate/description/) [Easy]
 
 Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.  
@@ -580,7 +541,7 @@ public:
 };
 ```
 
-### [**std::sort**](https://cplusplus.com/reference/algorithm/sort/)
+[**std::sort**](https://cplusplus.com/reference/algorithm/sort/)
 我们使用到了`sort`函数，在这里我们认识一下它:
 
 ```C++
@@ -662,6 +623,44 @@ public:
 };
 ```  
 
+### 347. [**Top K Frequent Elements**](https://leetcode.com/problems/top-k-frequent-elements/) [Medium]
+
+Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.
+**方法1：暴力解法** Runtime `17ms` Beats `59.14%` Memory `13.5MB` Beats `97.87%`
+
+```C++
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        vector<int> res{};
+        vector<int> freq{};
+        unordered_map<int, int> map;
+        if(nums.size() == 1)
+            return nums;
+        for(int i = 0; i < nums.size(); i++){
+            if(map.find(nums[i]) == map.end()){
+                map[nums[i]] = 1;
+            }
+            else 
+                map[nums[i]]++;
+        }
+        for(auto pair:map){
+            freq.push_back(pair.second);
+        }
+        sort(freq.begin(), freq.end(),  greater<int>());
+        for(int i = 0; i < k ; i++){
+            if(i > 0 && freq[i] == freq[i - 1])
+                continue;
+            for(auto pair:map){
+                if(pair.second == freq[i])
+                res.push_back(pair.first);
+            }
+        }
+        return res;
+    }
+};
+```
+
 ### 349. [**Intersection of Two Arrays**](https://leetcode.com/problems/intersection-of-two-arrays/description/) [Easy]
 
 Given two integer arrays nums1 and nums2, return an array of their intersection. Each element in the result must be unique and you may return the result in any order.  
@@ -720,7 +719,7 @@ public:
 };
 ```
 
-### 350. [***Intersection of Two Arrays II**](https://leetcode.com/problems/intersection-of-two-arrays-ii/description/) [Easy]
+### 350. [**Intersection of Two Arrays II**](https://leetcode.com/problems/intersection-of-two-arrays-ii/description/) [Easy]
 
 **方法1：暴力法** Runtime `6ms` Beats `61.88%` Memory `10.1MB` Beats `85.10%`  
 排序后进行比较
