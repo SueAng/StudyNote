@@ -98,6 +98,39 @@ public:
 Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.
 
 The overall run time complexity should be O(log (m+n)).  
+**方法1：直接法** Runtime `37ms` Beats `76.81%` Memory `90.2MB` Beats `23.43%`
+将两个数组融合为一个，这时融合的数组是无序的，排序，找到`Median`  
+时间复杂度： **O((m + n)log<sub>2</sub>(m + n))** 取决于排序算法的时间复杂度
+空间复杂度： **O(m + n)**
+
+```C++
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> nums{};
+        int nums1_len = nums1.size();
+        int nums2_len = nums2.size();
+
+        for(int i = 0; i < nums1_len; i++)
+            nums.push_back(nums1[i]);
+
+        for(int i = 0; i < nums2_len; i++)
+            nums.push_back(nums2[i]);
+
+        sort(nums.begin(), nums.end());
+
+        if(nums.size() % 2 == 0)
+            return double(nums[nums.size() / 2 - 1] + nums[nums.size() / 2])/2;
+        else
+            return  nums[nums.size() / 2];
+    }
+};
+```
+
+**方法2：双指针法** Runtime `23ms` Beats `99.3%` Memory `90MB` Beats `33.1%`
+把两个有序数组合并成一个有序数组，返回该有序数组的`median`。借助两个初始分别指向`nums1[0]`以及`nums2[0]`的指针, 比较他们大小，把小的加入到`nums{}`，大的保持不动，小的指针移动到下一个位置，继续比较，直到某一个数组比对完成，然后把另一个数组剩余的元素加入`nums{}`。
+时间复杂度：**O(n + m)**  只需将两个数组遍历一遍，按顺序加入`nums{}`中。
+空间复杂度：**O(n + m)** 需要一个辅助数组`nums{}`存合并后的数。
 
 ```C++
 class Solution {
@@ -108,6 +141,7 @@ public:
         int nums2_len = nums2.size();
         int p1 = 0;
         int p2 = 0;
+
         while(p1 < nums1_len && p2 < nums2_len){
             if(nums1[p1] < nums2[p2]){
                 nums.push_back(nums1[p1]);
@@ -118,14 +152,17 @@ public:
                 p2++;
             }
         }
+
         while(p1 < nums1_len){
             nums.push_back(nums1[p1]);
                 p1++;
         }
+
         while(p2 < nums2_len){
             nums.push_back(nums2[p2]);
                 p2++;
         }
+
         int n = p1 + p2;
         if(n % 2 == 0)
             return double(nums[n / 2 - 1] + nums[n / 2]) / 2;
@@ -134,8 +171,57 @@ public:
     }
 };
 ```
+**方法3:二分查找** Runtime `31ms` Beats `93.10%` Memory `89.1MB` Beats `98.97%`
+首先检查两个数组的长度，如果 `nums2` 的长度比 `nums1` 的长度小，就调换它们的位置，这样就可以确保 `nums1` 是更长的数组。
 
-### 15. [**3Sum**](https://leetcode.com/problems/3sum/description/) [Medium] 
+使用二分查找来找到两个数组的中位数。它先在 `nums1` 中找到一个位置，然后通过 `nums2` 中的元素数量来确定在 `nums2` 中的位置。这样就可以确定左边的元素数量和右边的元素数量。然后程序比较左边最大的元素和右边最小的元素以确定是否找到了中位数。如果没有找到，程序将根据左边和右边元素的关系来调整查找范围，直到找到中位数为止。
+
+如果数组的长度是偶数，程序将返回左边和右边元素的平均值作为中位数，如果长度是奇数，则返回左边最大的元素作为中位数。  
+时间复杂度：**O(log<sub>2</sub>(min(m, n)))**
+空间复杂度：**O(1)**
+
+```C++
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int nums1_len = nums1.size();
+        int nums2_len = nums2.size();
+
+        if(nums2_len < nums1_len) 
+            return findMedianSortedArrays(nums2, nums1);
+        
+        int low = 0, high = nums1_len;
+
+        while(low <= high){
+            int cut1 = (high + low)/ 2;
+            int cut2 = (nums1_len + nums2_len + 1) / 2 - cut1;
+            
+            int left1 = cut1 == 0 ? INT_MIN : nums1[cut1 - 1];
+            int left2 = cut2 == 0 ? INT_MIN : nums2[cut2 - 1];
+            
+            int right1 = cut1 == nums1_len ? INT_MAX : nums1[cut1];
+            int right2 = cut2 == nums2_len ? INT_MAX : nums2[cut2];
+            
+            if(left1 <= right2 && left2 <= right1){
+                if((nums1_len + nums2_len) % 2 == 0){
+                    return (max(left1, left2) + min(right1, right2)) / 2.0;
+                }
+                else{
+                    return max(left1, left2);
+                }
+            }
+            else if(left1 > right2){
+                high=cut1 - 1;
+            }
+            else{
+                low=cut1 + 1;
+            }
+        }
+        return 0.0;
+    }
+};
+```
+
+### 15. [**3Sum**](https://leetcode.com/problems/3sum/description/) [Medium]
 
 Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 Notice that the solution set must not contain duplicate triplets.  
@@ -427,26 +513,30 @@ public:
 Given an array nums of size n, return the majority element.
 
 The majority element is the element that appears more than ⌊n / 2⌋ times. You may assume that the majority element always exists in the array.  
-**方法1：双指针法** Runtime `20 ms` Beats `65.88%` Memory `19.5MB` Beats `80.16%`
+**方法1：直接法** Runtime `20 ms` Beats `65.88%` Memory `19.5MB` Beats `80.16%`
+由题知道出现最多的元素出现次数多于所有元素的一半，通过比较找到它。  
+时间复杂度：**O(n)**
+空间复杂度：**O(1)**
 
 ```C++
 class Solution {
 public:
     int majorityElement(vector<int>& nums) {
-        int len = nums.size()-1;
+        int nums_len = nums.size()-1;
         int maj = nums[0];
-        int count =1;
-        for(int i = 1;i < len;i++)
+        int count = 1;
+        for(int i = 1; i < nums_len; i++)
         {
             if(nums[i] == maj)
                 count++;
-            else {
+            else{
                 count--;
                 if(count == 0)
-                maj = nums[i+1];
+                    maj = nums[i+1];
            }
         }
         return maj;
+    }
 };
 ```
 
@@ -458,7 +548,8 @@ Note that it is the kth largest element in the sorted order, not the kth distinc
 
 You must solve it in O(n) time complexity.
 **方法1：暴力解法** Runtime `111ms` Beats `71.66%` Memory `45.6MB` Beats `74.50%`
-```
+
+```C++
 class Solution {
 public:
     int findKthLargest(vector<int>& nums, int k) {
@@ -545,9 +636,9 @@ public:
 我们使用到了`sort`函数，在这里我们认识一下它:
 
 ```C++
-default (1)	
+default (1)
 template <class RandomAccessIterator>  void sort (RandomAccessIterator first, RandomAccessIterator last);
-custom (2)	
+custom (2)
 template <class RandomAccessIterator, class Compare>  void sort (RandomAccessIterator first, RandomAccessIterator last, Compare comp);
 ```
 
